@@ -1,0 +1,10 @@
+{{#mainBal}}
+    import ballerina/io;
+    import ballerina/http;
+
+    public function main() returns error? {
+    final http:Client clientEndpoint = check new ("http://postman-echo.com");
+    json resp = check clientEndpoint->get("/get?test=123");
+    io:println(resp.toString());
+    }
+{{/mainBal}}

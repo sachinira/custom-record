@@ -1,0 +1,4 @@
+rootProject.name = 'custom-records'
+include 'ls-extention'
+include 'config:checkstyle'
+

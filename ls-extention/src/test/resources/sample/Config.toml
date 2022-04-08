@@ -1,0 +1,5 @@
+clientId = "3MVG9fe4g9fhX0E5zMorweTA8cFBov_GSOYgcppFjsa8fC5aBgqME9eE9Mz1XYSfJm0WETlhlJyL5yypmICKN"
+clientSecret = "1275588BB5155A981DD42BA6C3AC3B6F0AC1ED43E60D7D92A12B161454C11265"
+refreshUrl = "https://wso267-dev-ed.my.salesforce.com/services/oauth2/token"
+refreshToken = "5Aep861NGChdAifzi3hXnu1.yzIFzBFGTcKBSgnNks3_t9vHr9S0y5F3O4zBzCPD.QCgXjQ5qpNVYBZ2RPqYcXr"
+baseUrl = "https://wso267-dev-ed.my.salesforce.com/"

@@ -1,0 +1,24 @@
+{{#mainBal}}
+    {{#importsList}}
+        {{.}}
+    {{/importsList}}
+
+    {{#clientConfigContext}}
+        rest:ConnectionConfig config = {
+            baseUrl: "{{baseUrl}}",
+            clientConfig: {
+                clientId: "{{clientId}}",
+                clientSecret: "{{clientSecret}}",
+                refreshToken: "{{refreshToken}}",
+                refreshUrl: "{{refreshUrl}}"
+            }
+        };
+    {{/clientConfigContext}}
+
+    rest:Client baseClient = check new (config);
+
+    public function main() {
+        record {}|rest:Error response = baseClient->getRecord({{functionParameters}});
+        io:println(response);
+    }
+{{/mainBal}}

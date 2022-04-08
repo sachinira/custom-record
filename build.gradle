@@ -1,0 +1,152 @@
+plugins {
+    id "base"
+    id 'maven-publish'
+    id "com.github.spotbugs" version "4.0.5"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+    id "de.undercouch.download" version "4.0.4"
+    id "net.researchgate.release" version "2.8.0"
+    id 'org.javamodularity.moduleplugin' version '1.7.0' apply false
+}
+
+apply plugin: 'java'
+apply plugin: "com.github.spotbugs"
+apply plugin: 'jacoco'
+apply plugin: "org.javamodularity.moduleplugin"
+
+ext.ballerinaLangVersion = project.ballerinaLangVersion
+ext.testngVersion = project.testngVersion
+ext.commonsLang3Version = project.commonsLang3Version
+ext.commonsIoVersion = project.commonsIoVersion
+ext.netLingalaZip4jVersion = project.netLingalaZip4jVersion
+ext.slf4jVersion = project.slf4jVersion
+ext.commonsLang3Version = project.commonsLang3Version
+ext.commonsIoVersion = project.commonsIoVersion
+ext.netLingalaZip4jVersion = project.netLingalaZip4jVersion
+ext.stdlibIoVersion = project.stdlibIoVersion
+ext.stdlibLogVersion = project.stdlibLogVersion
+ext.stdlibMimeVersion = project.stdlibMimeVersion
+ext.stdlibAuthVersion = project.stdlibAuthVersion
+ext.stdlibCacheVersion = project.stdlibCacheVersion
+ext.stdlibTimeVersion = project.stdlibTimeVersion
+ext.stdlibCryptoVersion = project.stdlibCryptoVersion
+ext.stdlibTaskVersion = project.stdlibTaskVersion
+ext.stdlibFileVersion = project.stdlibFileVersion
+ext.stdlibHttpVersion = project.stdlibHttpVersion
+ext.stdlibUrlVersion = project.stdlibUrlVersion
+ext.stdlibXmldataVersion = project.stdlibXmldataVersion
+ext.jacocoVersion = project.jacocoVersion
+ext.puppycrawlCheckstyleVersion = "8.18"
+
+allprojects {
+    group = 'io.ballerina'
+    version = project.version
+    apply plugin: 'checkstyle'
+    apply plugin: 'maven-publish'
+
+    repositories {
+        mavenLocal()
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/repositories/releases/'
+        }
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/groups/wso2-public/'
+        }
+
+        maven {
+            url = 'https://maven.wso2.org/nexus/content/repositories/orgballerinalang-1614'
+        }
+
+        maven {
+            url = 'https://repo.maven.apache.org/maven2'
+        }
+
+        maven {
+            url = 'https://maven.pkg.github.com/ballerina-platform/*'
+            credentials {
+                username System.getenv("packageUser")
+                password System.getenv("packagePAT")
+            }
+        }
+
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    // Add checkstyles
+    checkstyle {
+        toolVersion '8.16'
+        configFile = file("$rootProject.projectDir/config/checkstyle/checkstyle.xml")
+    }
+
+    def excludePattern = '**/module-info.java'
+    tasks.withType(Checkstyle) {
+        configFile file("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+        exclude excludePattern
+    }
+
+    ext {
+        snapshotVersion= '-SNAPSHOT'
+        timestampedVersionRegex = '.*-\\d{8}-\\d{6}-\\w.*\$'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    configurations {
+        ballerinaStdLibs
+        ballerinaConnectors
+    }
+    dependencies {
+        /* Standard libraries */
+        ballerinaStdLibs "io.ballerina.stdlib:io-ballerina:${stdlibIoVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:http-ballerina:${stdlibHttpVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:log-ballerina:${stdlibLogVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:os-ballerina:${stdlibOsVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:mime-ballerina:${stdlibMimeVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:regex-ballerina:${stdlibRegexVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:crypto-ballerina:${stdlibCryptoVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:auth-ballerina:${stdlibAuthVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:time-ballerina:${stdlibTimeVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:cache-ballerina:${stdlibCacheVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:task-ballerina:${stdlibTaskVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:file-ballerina:${stdlibFileVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:jwt-ballerina:${stdlibJwtVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:oauth2-ballerina:${stdlibOAuth2Version}"
+        ballerinaStdLibs "io.ballerina.stdlib:uuid-ballerina:${stdlibUuidVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:url-ballerina:${stdlibUrlVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:xmldata-ballerina:${stdlibXmldataVersion}"
+        ballerinaStdLibs "io.ballerina.stdlib:observe-ballerina:${observeVersion}"
+
+
+//        implementation("org.ballerinalang.sf:module-ballerinax-sfdc:${salesforceConnectorVersion}")
+    }
+}
+
+def moduleVersion = project.version.replace("-SNAPSHOT", "")
+
+//tasks.withType(JavaCompile) {
+//    options.encoding = 'UTF-8'
+//}
+
+//task codeCoverageReport(type: JacocoReport) {
+//    dependsOn = subprojects.test
+//
+//    executionData fileTree(project.rootDir.absolutePath).include("**/build/coverage-reports/*.exec")
+//
+//    subprojects.each {
+//        sourceSets it.sourceSets.main
+//    }
+//    reports {
+//        xml.enabled = true
+//        html.enabled = true
+//        csv.enabled = true
+//        xml.destination = new File("${buildDir}/reports/jacoco/report.xml")
+//        html.destination = new File("${buildDir}/reports/jacoco/report.html")
+//        csv.destination = new File("${buildDir}/reports/jacoco/report.csv")
+//    }
+//
+//    onlyIf = {
+//        true
+//    }
+//}
